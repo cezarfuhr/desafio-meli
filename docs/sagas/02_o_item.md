@@ -19,47 +19,47 @@ A fundação concluída da Saga 01.
 ### **Passos de Implementação (Blueprint para o Implementador):**
 
 **1. Estrutura de Arquivos e Diretórios:**
-   - [ ] Criar a estrutura de diretórios: `app/api/v1`, `app/core`, `app/models`, `app/repository`, `app/services`, `data`.
-   - [ ] Criar os arquivos Python vazios (`__init__.py` quando necessário):
+   - [X] Criar a estrutura de diretórios: `app/api/v1`, `app/core`, `app/models`, `app/repository`, `app/services`, `data`.
+   - [X] Criar os arquivos Python vazios (`__init__.py` quando necessário):
      - `app/api/v1/items.py`
      - `app/core/logging_config.py`
      - `app/models/item.py`
      - `app/repository/item_repository.py`
      - `app/services/item_service.py`
-   - [ ] Criar o arquivo de dados vazio: `data/items.json`.
+   - [X] Criar o arquivo de dados vazio: `data/items.json`.
 
 **2. Implementar a Estratégia de Logging:**
-   - [ ] Em `app/core/logging_config.py`, criar uma função que configure o `logging` do Python para `stdout` com um formato claro.
-   - [ ] Em `app/main.py`, importar e chamar a função de configuração de logging na inicialização da aplicação.
+   - [X] Em `app/core/logging_config.py`, criar uma função que configure o `logging` do Python para `stdout` com um formato claro.
+   - [X] Em `app/main.py`, importar e chamar a função de configuração de logging na inicialização da aplicação.
 
 **3. Definir o Contrato de Dados (Model):**
-   - [ ] Em `app/models/item.py`, definir a classe `Item` usando Pydantic.
-   - [ ] Campos sugeridos: `id: str`, `title: str`, `price: float`, `currency_id: str`, `description: str`, `condition: str`.
+   - [X] Em `app/models/item.py`, definir a classe `Item` usando Pydantic.
+   - [X] Campos sugeridos: `id: str`, `title: str`, `price: float`, `currency_id: str`, `description: str`, `condition: str`.
 
 **4. Criar o "Banco de Dados" Falso:**
-   - [ ] Popular o arquivo `data/items.json` com uma lista contendo 2 ou 3 objetos de item de exemplo.
+   - [X] Popular o arquivo `data/items.json` com uma lista contendo 2 ou 3 objetos de item de exemplo.
 
 **5. Implementar a Camada de Acesso a Dados (Repository):**
-   - [ ] Em `app/repository/item_repository.py`, criar a classe `ItemRepository`.
-   - [ ] Esta classe deve ler o arquivo `data/items.json` em sua inicialização.
-   - [ ] Implementar o método `find_by_id(self, item_id: str) -> Item | None`.
+   - [X] Em `app/repository/item_repository.py`, criar a classe `ItemRepository`.
+   - [X] Esta classe deve ler o arquivo `data/items.json` em sua inicialização.
+   - [X] Implementar o método `find_by_id(self, item_id: str) -> Item | None`.
 
 **6. Implementar a Lógica de Negócio (Service):**
-   - [ ] Em `app/services/item_service.py`, criar uma exceção customizada `ItemNotFoundException`.
-   - [ ] Criar a classe `ItemService`, que depende de `ItemRepository`.
-   - [ ] Implementar o método `get_item_by_id(self, item_id: str) -> Item`, que chama o repositório e levanta `ItemNotFoundException` se o item não for encontrado.
+   - [X] Em `app/services/item_service.py`, criar uma exceção customizada `ItemNotFoundException`.
+   - [X] Criar a classe `ItemService`, que depende de `ItemRepository`.
+   - [X] Implementar o método `get_item_by_id(self, item_id: str) -> Item`, que chama o repositório e levanta `ItemNotFoundException` se o item não for encontrado.
 
 **7. Expor o Endpoint (API):**
-   - [ ] Em `app/api/v1/items.py`, criar um `APIRouter`.
-   - [ ] Implementar o endpoint `GET /items/{item_id}` que injeta a dependência do `ItemService`.
-   - [ ] O endpoint deve chamar o serviço e retornar o item.
-   - [ ] Implementar um `exception_handler` no `app/main.py` para capturar `ItemNotFoundException` e retornar uma resposta `HTTP 404`.
-   - [ ] Incluir o novo router no `app/main.py` com o prefixo `/api/v1`.
+   - [X] Em `app/api/v1/items.py`, criar um `APIRouter`.
+   - [X] Implementar o endpoint `GET /items/{item_id}` que injeta a dependência do `ItemService`.
+   - [X] O endpoint deve chamar o serviço e retornar o item.
+   - [X] Implementar um `exception_handler` no `app/main.py` para capturar `ItemNotFoundException` e retornar uma resposta `HTTP 404`.
+   - [X] Incluir o novo router no `app/main.py` com o prefixo `/api/v1`.
 
 **8. Implementar Testes:**
-   - [ ] Em `tests/test_api.py`, escrever testes de integração para o endpoint `/api/v1/items/{item_id}`, cobrindo:
+   - [X] Em `tests/test_api.py`, escrever testes de integração para o endpoint `/api/v1/items/{item_id}`, cobrindo:
      - Caso de sucesso com um ID válido (retorno 200 e o JSON correto).
      - Caso de falha com um ID inválido (retorno 404).
 
 **9. Registrar o Marco (Commit):**
-   - [ ] Ao final de todos os passos, fazer um commit com uma mensagem clara, como `feat(items): implement get item details endpoint`.
+   - [X] Ao final de todos os passos, fazer um commit com uma mensagem clara, como `feat(items): implement get item details endpoint`.

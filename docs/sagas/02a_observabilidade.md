@@ -15,21 +15,21 @@ A implementação da Saga 02, com logging básico para `stdout`.
 ### **Passos de Implementação (Blueprint para o Implementador):**
 
 **1. Implementar o `JSONFormatter`:**
-   - [ ] No arquivo `app/core/logging_config.py`, criar uma nova classe `JSONFormatter` que herda de `logging.Formatter`.
-   - [ ] O método `format(self, record)` desta classe deve construir um dicionário Python com os atributos de log desejados (ex: `timestamp`, `level`, `name`, `message`) e convertê-lo para uma string JSON.
-   - [ ] Modificar a função `configure_logging` para usar este novo `JSONFormatter` em vez do formatador de texto.
+   - [X] No arquivo `app/core/logging_config.py`, criar uma nova classe `JSONFormatter` que herda de `logging.Formatter`.
+   - [X] O método `format(self, record)` desta classe deve construir um dicionário Python com os atributos de log desejados (ex: `timestamp`, `level`, `name`, `message`) e convertê-lo para uma string JSON.
+   - [X] Modificar a função `configure_logging` para usar este novo `JSONFormatter` em vez do formatador de texto.
 
 **2. Atualizar a Documentação:**
-   - [ ] No arquivo `README.md`, adicionar a seção "Estratégia de Logging e Observabilidade" que discutimos. O texto deve explicar a abordagem de `stdout` e dar o exemplo de configuração do `docker-compose.yml` para um `syslog driver` como o Papertrail.
+   - [X] No arquivo `README.md`, adicionar a seção "Estratégia de Logging e Observabilidade" que discutimos. O texto deve explicar a abordagem de `stdout` e dar o exemplo de configuração do `docker-compose.yml` para um `syslog driver` como o Papertrail.
 
 **3. Testar a Nova Configuração:**
-   - [ ] Reiniciar a aplicação com `./run.sh`.
-   - [ ] Visualizar os logs com `docker compose logs api`.
-   - [ ] **Critério de Sucesso:** A saída dos logs deve estar em formato JSON.
+   - [X] Reiniciar a aplicação com `./run.sh`.
+   - [X] Visualizar os logs com `docker compose logs api`.
+   - [X] **Critério de Sucesso:** A saída dos logs deve estar em formato JSON.
 
 **4. Registrar o Marco (Commit):**
-   - [ ] Ao final de todos os passos, fazer um commit com uma mensagem clara.
-   - [ ] **Sugestão de Mensagem:** `feat(logging): implement structured JSON logging`
+   - [X] Ao final de todos os passos, fazer um commit com uma mensagem clara.
+   - [X] **Sugestão de Mensagem:** `feat(logging): implement structured JSON logging`
 
 ---
 
