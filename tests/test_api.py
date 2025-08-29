@@ -148,3 +148,76 @@ def test_create_item_with_invalid_price():
     assert response.status_code == 422
     error_data = response.json()
     assert "detail" in error_data
+
+
+def test_item_lifecycle_e2e():
+    """
+    Teste End-to-End completo do ciclo de vida de um item.
+    
+    Testa todas as operacoes CRUD em sequencia:
+    CREATE -> READ -> UPDATE -> READ -> DELETE -> READ (404)
+    """
+    # 1. CREATE: Criar um novo item
+    create_payload = {
+        "title": "E2E Test Product",
+        "price": 299.99,
+        "currency_id": "USD",
+        "description": "Product for end-to-end testing",
+        "condition": "new"
+    }
+    
+    create_response = client.post("/api/v1/items", json=create_payload)
+    assert create_response.status_code == 201
+    
+    created_item = create_response.json()
+    item_id = created_item["id"]
+    assert item_id.startswith("MLB")
+    
+    # 2. READ (Verify Create): Verificar se item foi criado corretamente
+    read_response_1 = client.get(f"/api/v1/items/{item_id}")
+    assert read_response_1.status_code == 200
+    
+    read_item_1 = read_response_1.json()
+    assert read_item_1["title"] == create_payload["title"]
+    assert read_item_1["price"] == create_payload["price"]
+    assert read_item_1["condition"] == create_payload["condition"]
+    
+    # 3. UPDATE: Atualizar preco e descricao do item
+    update_payload = {
+        "price": 399.99,
+        "description": "Updated description for E2E testing"
+    }
+    
+    update_response = client.put(f"/api/v1/items/{item_id}", json=update_payload)
+    assert update_response.status_code == 200
+    
+    updated_item = update_response.json()
+    assert updated_item["price"] == update_payload["price"]
+    assert updated_item["description"] == update_payload["description"]
+    # Outros campos devem permanecer inalterados
+    assert updated_item["title"] == create_payload["title"]
+    assert updated_item["condition"] == create_payload["condition"]
+    
+    # 4. READ (Verify Update): Verificar se atualizacao foi persistida
+    read_response_2 = client.get(f"/api/v1/items/{item_id}")
+    assert read_response_2.status_code == 200
+    
+    read_item_2 = read_response_2.json()
+    assert read_item_2["price"] == 399.99
+    assert read_item_2["description"] == "Updated description for E2E testing"
+    assert read_item_2["title"] == create_payload["title"]  # Nao mudou
+    
+    # 5. DELETE: Remover o item
+    delete_response = client.delete(f"/api/v1/items/{item_id}")
+    assert delete_response.status_code == 204
+    
+    # Verifica se resposta esta vazia (No Content)
+    assert delete_response.content == b""
+    
+    # 6. READ (Verify Delete): Verificar se item foi removido
+    read_response_3 = client.get(f"/api/v1/items/{item_id}")
+    assert read_response_3.status_code == 404
+    
+    error_data = read_response_3.json()
+    assert "detail" in error_data
+    assert item_id in error_data["detail"]

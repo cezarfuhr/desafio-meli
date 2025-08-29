@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -33,3 +34,16 @@ class ItemCreateModel(BaseModel):
     currency_id: str
     description: str
     condition: str
+
+
+class ItemUpdateModel(BaseModel):
+    """
+    Modelo para atualizacao de itens existentes.
+    
+    Todos os campos sao opcionais, permitindo atualizacao parcial.
+    """
+    title: Optional[str] = None
+    price: Optional[float] = None
+    currency_id: Optional[str] = None
+    description: Optional[str] = None
+    condition: Optional[str] = None

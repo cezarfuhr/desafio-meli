@@ -19,6 +19,76 @@ Para instruções detalhadas de como construir a imagem, iniciar a aplicação, 
 
 ➡️ **[./run.md](./run.md)**
 
+## Diagrama de Arquitetura
+
+A aplicação segue uma arquitetura em camadas (Ports and Adapters) que separa claramente as responsabilidades:
+
+```mermaid
+graph TD
+    A[Client/HTTP Requests] --> B[FastAPI - API Layer]
+    B --> C[Service Layer]
+    C --> D[Repository Layer] 
+    D --> E[Data Layer - JSON File]
+    
+    subgraph "API Layer"
+        B1[GET /api/v1/items/{id}]
+        B2[POST /api/v1/items]  
+        B3[PUT /api/v1/items/{id}]
+        B4[DELETE /api/v1/items/{id}]
+    end
+    
+    subgraph "Service Layer"
+        C1[ItemService]
+        C2[Business Logic]
+        C3[ItemNotFoundException]
+    end
+    
+    subgraph "Repository Layer"  
+        D1[ItemRepository]
+        D2[find_by_id]
+        D3[save]
+        D4[delete]
+    end
+    
+    subgraph "Data Layer"
+        E1[items.json]
+        E2[Configuration via .env]
+    end
+    
+    subgraph "Cross-Cutting Concerns"
+        F1[JSON Structured Logging]
+        F2[Pydantic Validation]
+        F3[Exception Handling]
+    end
+    
+    B --> B1
+    B --> B2  
+    B --> B3
+    B --> B4
+    
+    C --> C1
+    C --> C2
+    C --> C3
+    
+    D --> D1
+    D --> D2
+    D --> D3  
+    D --> D4
+    
+    E --> E1
+    E --> E2
+    
+    C -.-> F1
+    B -.-> F2
+    B -.-> F3
+```
+
+**Benefícios da Arquitetura:**
+- **Separação de Responsabilidades:** Cada camada tem uma função específica
+- **Testabilidade:** Camadas isoladas permitem testes unitários eficazes
+- **Manutenibilidade:** Mudanças em uma camada não afetam outras
+- **Escalabilidade:** Fácil substituição de componentes (ex: JSON → Database)
+
 ## Estratégia de Logging e Observabilidade
 
 Este projeto implementa uma estratégia de logging estruturado que facilita a integração com qualquer plataforma de observabilidade moderna.
@@ -100,12 +170,65 @@ A eficiência do desenvolvimento foi aprimorada através de uma combinação de 
 -   **Stack Tecnológica:** A escolha por **Python/FastAPI** foi deliberada para maximizar a velocidade de desenvolvimento, aproveitar a validação de dados nativa com Pydantic e obter documentação de API (Swagger UI) automaticamente.
 -   **Fluxo de Trabalho Arquiteto/Implementador:** Utilizamos um modelo de colaboração onde uma IA (Gemini) atua como o **Arquiteto de Software**, responsável pelo planejamento, design, documentação e revisão. Outra IA (Claude) atua como o **Implementador**, focada em traduzir os blueprints do arquiteto em código limpo e funcional. Este processo, documentado em `prompts.md`, permitiu uma separação clara de responsabilidades e acelerou o ciclo de desenvolvimento.
 
-### Saga 02 - O Item
-Implementação da lógica de negócio com arquitetura limpa:
+## Plano de Projeto
 
--   `app/models/item.py`: Modelo Pydantic para representação de itens
--   `app/repository/item_repository.py`: Camada de acesso a dados
--   `app/services/item_service.py`: Lógica de negócio e exceções customizadas
--   `app/api/v1/items.py`: Endpoints REST com injeção de dependência
--   `app/core/logging_config.py`: Configuração centralizada de logging estruturado
+Este projeto foi desenvolvido seguindo uma metodologia incremental documentada através de "sagas". Cada saga representa uma etapa de desenvolvimento com objetivos específicos e critérios de aceitação bem definidos.
+
+**Documentação Completa do Plano:** A pasta `docs/sagas/` contém a documentação detalhada de cada fase do projeto:
+
+- **Saga 01 - Fundação:** Estrutura básica, containerização e "Hello World"
+- **Saga 02 - O Item:** Implementação da lógica de negócio com arquitetura limpa  
+- **Saga 02a - Observabilidade:** Logging estruturado JSON para monitoramento
+- **Saga 03 - Configuração e Modificação:** Configurações externas e endpoint POST
+- **Saga 03.1 - CRUD Completo:** Implementação de UPDATE e DELETE com testes E2E
+- **Saga 04 - Documentação Final:** Diagramas de arquitetura e empacotamento
+
+## API Endpoints
+
+A API oferece operações CRUD completas para gerenciamento de itens:
+
+### **GET** `/api/v1/items/{item_id}`
+Busca um item específico pelo ID.
+- **Status**: `200 OK` | `404 Not Found`
+- **Response**: Objeto `Item` com todos os campos
+
+### **POST** `/api/v1/items`  
+Cria um novo item.
+- **Status**: `201 Created` | `422 Validation Error`
+- **Payload**: `ItemCreateModel` (todos os campos exceto `id`)
+- **Response**: Objeto `Item` criado com `id` gerado automaticamente
+
+### **PUT** `/api/v1/items/{item_id}`
+Atualiza um item existente (atualização parcial suportada).
+- **Status**: `200 OK` | `404 Not Found` | `422 Validation Error`  
+- **Payload**: `ItemUpdateModel` (todos os campos opcionais)
+- **Response**: Objeto `Item` atualizado
+
+### **DELETE** `/api/v1/items/{item_id}`
+Remove um item.
+- **Status**: `204 No Content` | `404 Not Found`
+- **Response**: Corpo vazio
+
+### Estrutura do Projeto
+
+### Saga 01 - Fundação
+Estrutura básica e containerização:
+
+-   `app/main.py`: Ponto de entrada da aplicação FastAPI e endpoint "Hello World"
+-   `tests/test_api.py`: Suíte de testes de integração abrangente
+-   `Dockerfile`: Receita para construir a imagem da aplicação  
+-   `docker-compose.yml`: Orquestra a execução do container
+-   `pyproject.toml` / `poetry.lock`: Gerenciamento de dependências
+-   `docs/sagas/`: Documentação incremental da arquitetura e decisões
+
+### Saga 02-04 - Implementação Completa  
+Funcionalidades completas com arquitetura limpa:
+
+-   `app/models/item.py`: Modelos Pydantic (Item, ItemCreateModel, ItemUpdateModel)
+-   `app/repository/item_repository.py`: Camada de persistência com operações CRUD
+-   `app/services/item_service.py`: Lógica de negócio e exceções customizadas  
+-   `app/api/v1/items.py`: Endpoints REST completos com injeção de dependência
+-   `app/core/config.py`: Configuração centralizada com pydantic-settings
+-   `app/core/logging_config.py`: Logging estruturado JSON para observabilidade
 -   `data/items.json`: Base de dados simulada para desenvolvimento
+-   `tests/`: Suíte completa com testes unitários, integração e E2E

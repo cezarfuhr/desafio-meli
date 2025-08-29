@@ -118,3 +118,28 @@ class ItemRepository:
         except (OSError, IOError) as e:
             logger.error(f"Error saving items to {self.data_file_path}: {e}")
             raise
+    
+    def delete(self, item_id: str) -> bool:
+        """
+        Remove um item pelo seu ID.
+        
+        Args:
+            item_id: ID do item a ser removido
+            
+        Returns:
+            True se um item foi removido, False se nao existia
+        """
+        logger.info(f"Deleting item: {item_id}")
+        
+        if item_id not in self._items:
+            logger.warning(f"Item not found for deletion: {item_id}")
+            return False
+        
+        # Remove item da estrutura em memoria
+        del self._items[item_id]
+        
+        # Salva todos os itens no arquivo (sem o item removido)
+        self._save_all_items()
+        
+        logger.info(f"Item deleted successfully: {item_id}")
+        return True
