@@ -81,6 +81,25 @@ A arquitetura do projeto estabelece a fundação para o desenvolvimento:
 -   `pyproject.toml` / `poetry.lock`: Gerenciamento de dependências.
 -   `docs/sagas/`: Documentação incremental da arquitetura e decisões de projeto.
 
+## Decisões Arquitetônicas Chave
+
+Este projeto foi construído com várias decisões de arquitetura intencionais para garantir robustez, manutenibilidade e alinhamento com as práticas modernas de engenharia de software:
+
+1.  **Arquitetura em Camadas (Ports and Adapters):** A aplicação é dividida em camadas distintas (API, Serviços, Repositório) para separar as responsabilidades. Isso garante que a lógica de negócio (`services`) não dependa de detalhes de implementação, como o framework web (`api`) ou o método de persistência (`repository`).
+
+2.  **Containerização com Docker:** Todo o ambiente de desenvolvimento e produção é containerizado. Isso resolve o problema de "funciona na minha máquina", garante consistência entre ambientes e simplifica drasticamente a execução do projeto para qualquer pessoa. O `Dockerfile` multi-stage cria uma imagem final otimizada, contendo apenas o necessário para a execução.
+
+3.  **Logging Estruturado para `stdout`:** Seguindo a metodologia "Twelve-Factor App", a aplicação não escreve logs em arquivos. Em vez disso, emite logs estruturados (JSON) para a saída padrão, delegando a responsabilidade de coleta e armazenamento para o ambiente de execução (Docker). Isso torna a aplicação agnóstica em relação à plataforma de observabilidade e pronta para integração com sistemas de monitoramento de nível empresarial.
+
+4.  **Gerenciamento de Dependências com Poetry:** Usamos Poetry e seu arquivo `poetry.lock` para garantir builds 100% reprodutíveis. Qualquer pessoa que construir o projeto terá o mesmo conjunto exato de dependências, eliminando conflitos de versão.
+
+## Estratégia Técnica e Uso de IA
+
+A eficiência do desenvolvimento foi aprimorada através de uma combinação de ferramentas modernas e um fluxo de trabalho assistido por IA.
+
+-   **Stack Tecnológica:** A escolha por **Python/FastAPI** foi deliberada para maximizar a velocidade de desenvolvimento, aproveitar a validação de dados nativa com Pydantic e obter documentação de API (Swagger UI) automaticamente.
+-   **Fluxo de Trabalho Arquiteto/Implementador:** Utilizamos um modelo de colaboração onde uma IA (Gemini) atua como o **Arquiteto de Software**, responsável pelo planejamento, design, documentação e revisão. Outra IA (Claude) atua como o **Implementador**, focada em traduzir os blueprints do arquiteto em código limpo e funcional. Este processo, documentado em `prompts.md`, permitiu uma separação clara de responsabilidades e acelerou o ciclo de desenvolvimento.
+
 ### Saga 02 - O Item
 Implementação da lógica de negócio com arquitetura limpa:
 

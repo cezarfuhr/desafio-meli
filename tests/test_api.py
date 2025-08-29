@@ -104,3 +104,47 @@ def test_create_item_success():
     
     retrieved_item = get_response.json()
     assert retrieved_item == created_item
+
+
+def test_create_item_invalid_payload():
+    """
+    Testa erro de validacao com payload invalido.
+    """
+    invalid_payload = {
+        "title": "Valid Title",
+        # price faltando - campo obrigatorio
+        "currency_id": "BRL",
+        "description": "Valid description",
+        "condition": "new"
+    }
+    
+    response = client.post("/api/v1/items", json=invalid_payload)
+    
+    # Verifica status 422 Unprocessable Entity (erro de validacao)
+    assert response.status_code == 422
+    
+    error_data = response.json()
+    assert "detail" in error_data
+    
+    # Verifica se menciona o campo price
+    error_details = str(error_data["detail"])
+    assert "price" in error_details.lower()
+
+
+def test_create_item_with_invalid_price():
+    """
+    Testa erro com tipo de dados invalido para price.
+    """
+    invalid_payload = {
+        "title": "Valid Title",
+        "price": "not_a_number",  # tipo invalido
+        "currency_id": "BRL", 
+        "description": "Valid description",
+        "condition": "new"
+    }
+    
+    response = client.post("/api/v1/items", json=invalid_payload)
+    
+    assert response.status_code == 422
+    error_data = response.json()
+    assert "detail" in error_data
