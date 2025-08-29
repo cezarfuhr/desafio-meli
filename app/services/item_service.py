@@ -1,7 +1,8 @@
 import logging
+import uuid
 from typing import Optional
 
-from app.models.item import Item
+from app.models.item import Item, ItemCreateModel
 from app.repository.item_repository import ItemRepository
 
 logger = logging.getLogger(__name__)
@@ -61,3 +62,30 @@ class ItemService:
         
         logger.info(f"Item found: {item.title} (ID: {item_id})")
         return item
+    
+    def create_item(self, item_data: ItemCreateModel) -> Item:
+        """
+        Cria um novo item.
+        
+        Args:
+            item_data: Dados do item a ser criado
+            
+        Returns:
+            Item criado com ID gerado
+        """
+        # Gera ID unico para o novo item
+        new_id = f"MLB{uuid.uuid4().hex[:8].upper()}"
+        
+        logger.info(f"Creating new item with ID: {new_id}")
+        
+        # Cria instancia completa do Item
+        item = Item(
+            id=new_id,
+            **item_data.model_dump()
+        )
+        
+        # Persiste o item usando o repositorio
+        saved_item = self.item_repository.save(item)
+        
+        logger.info(f"Item created successfully: {saved_item.title} (ID: {new_id})")
+        return saved_item

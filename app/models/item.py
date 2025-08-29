@@ -19,3 +19,17 @@ class Item(BaseModel):
     currency_id: str
     description: str
     condition: str
+
+
+class ItemCreateModel(BaseModel):
+    """
+    Modelo para criacao de novos itens.
+    
+    Contem todos os campos de Item exceto o 'id',
+    que sera gerado automaticamente pelo sistema.
+    """
+    title: str
+    price: float
+    currency_id: str
+    description: str
+    condition: str

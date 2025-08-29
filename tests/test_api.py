@@ -61,3 +61,46 @@ def test_get_all_test_items():
         assert "title" in item_data
         assert "price" in item_data
         assert "currency_id" in item_data
+
+
+def test_create_item_success():
+    """
+    Testa o endpoint POST /api/v1/items para criacao de um novo item.
+    
+    Verifica se retorna status 201 e o item criado com ID gerado.
+    """
+    new_item_payload = {
+        "title": "Smartphone Samsung Galaxy S23",
+        "price": 3499.99,
+        "currency_id": "BRL",
+        "description": "Smartphone Samsung Galaxy S23 com tela de 6.1 polegadas, camera de 50MP e processador Snapdragon 8 Gen 2.",
+        "condition": "new"
+    }
+    
+    response = client.post("/api/v1/items", json=new_item_payload)
+    
+    # Verifica status 201 Created
+    assert response.status_code == 201
+    
+    # Verifica dados do item criado
+    created_item = response.json()
+    
+    # Verifica se ID foi gerado (formato MLB + 8 caracteres)
+    assert "id" in created_item
+    assert created_item["id"].startswith("MLB")
+    assert len(created_item["id"]) == 11  # MLB + 8 caracteres
+    
+    # Verifica se todos os dados enviados estao presentes
+    assert created_item["title"] == new_item_payload["title"]
+    assert created_item["price"] == new_item_payload["price"]
+    assert created_item["currency_id"] == new_item_payload["currency_id"]
+    assert created_item["description"] == new_item_payload["description"]
+    assert created_item["condition"] == new_item_payload["condition"]
+    
+    # Verifica se o item pode ser recuperado por GET
+    item_id = created_item["id"]
+    get_response = client.get(f"/api/v1/items/{item_id}")
+    assert get_response.status_code == 200
+    
+    retrieved_item = get_response.json()
+    assert retrieved_item == created_item
