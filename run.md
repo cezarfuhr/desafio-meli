@@ -25,13 +25,13 @@ Após a execução, a API estará rodando em segundo plano.
 Para parar o container, execute o seguinte comando no diretório raiz do projeto:
 
 ```sh
-docker-compose down
+docker compose down
 ```
 
 ## Executando os Testes
 
-Para executar os testes, você pode usar o `docker-compose` para rodar o `pytest` dentro do container de serviço:
+Para executar os testes, você pode usar o `docker compose` para rodar o `pytest` dentro do container de serviço:
 
 ```sh
-docker-compose exec api pytest
+docker compose exec api pytest
 ```
