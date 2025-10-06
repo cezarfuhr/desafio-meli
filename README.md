@@ -27,57 +27,57 @@ A aplicação segue uma arquitetura em camadas (Ports and Adapters) que separa c
 graph TD
     A[Client/HTTP Requests] --> B[FastAPI - API Layer]
     B --> C[Service Layer]
-    C --> D[Repository Layer] 
+    C --> D[Repository Layer]
     D --> E[Data Layer - JSON File]
-    
-    subgraph "API Layer"
-        B1[GET /api/v1/items/{id}]
-        B2[POST /api/v1/items]  
-        B3[PUT /api/v1/items/{id}]
-        B4[DELETE /api/v1/items/{id}]
+
+    subgraph API["API Layer"]
+        B1["GET /api/v1/items/id"]
+        B2["POST /api/v1/items"]
+        B3["PUT /api/v1/items/id"]
+        B4["DELETE /api/v1/items/id"]
     end
-    
-    subgraph "Service Layer"
+
+    subgraph Service["Service Layer"]
         C1[ItemService]
         C2[Business Logic]
         C3[ItemNotFoundException]
     end
-    
-    subgraph "Repository Layer"  
+
+    subgraph Repository["Repository Layer"]
         D1[ItemRepository]
         D2[find_by_id]
         D3[save]
         D4[delete]
     end
-    
-    subgraph "Data Layer"
+
+    subgraph Data["Data Layer"]
         E1[items.json]
         E2[Configuration via .env]
     end
-    
-    subgraph "Cross-Cutting Concerns"
+
+    subgraph Cross["Cross-Cutting Concerns"]
         F1[JSON Structured Logging]
         F2[Pydantic Validation]
         F3[Exception Handling]
     end
-    
+
     B --> B1
-    B --> B2  
+    B --> B2
     B --> B3
     B --> B4
-    
+
     C --> C1
     C --> C2
     C --> C3
-    
+
     D --> D1
     D --> D2
-    D --> D3  
+    D --> D3
     D --> D4
-    
+
     E --> E1
     E --> E2
-    
+
     C -.-> F1
     B -.-> F2
     B -.-> F3
